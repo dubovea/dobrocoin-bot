@@ -6,14 +6,17 @@ async function checkRegistration(ctx) {
   const telegramLogin = ctx.from.username;
   try {
     const userResult = await dbClient.query(
-      `SELECT * FROM public.users WHERE telegram_login = $1`,
+      `SELECT * FROM public.users WHERE LOWER(telegram_login) = LOWER($1)`,
       [telegramLogin]
     );
     const isAdminUser = await isAdmin(ctx);
     const isRegistered = !!userResult.rows.length;
     IS_ADMIN = isAdminUser;
     return { isRegistered, isAdminUser };
-  } catch (err) {}
+  } catch (err) {
+    console.error(errors.registrationError, err);
+    ctx.reply(errors.registrationError);
+  }
 }
 
 async function addUser(ctx) {
@@ -52,7 +55,7 @@ async function isAdmin(ctx) {
   const telegramLogin = ctx.from.username;
   // Проверка прав администратора
   const result = await dbClient.query(
-    `SELECT * FROM public.admins WHERE telegram_login = $1`,
+    `SELECT * FROM public.admins WHERE LOWER(telegram_login) = LOWER($1)`,
     [telegramLogin]
   );
   return result.rows.length > 0;
