@@ -1,0 +1,26 @@
+{
+  "name": "dobrocoin-bot",
+  "version": "1.0.0",
+  "description": "Приветствие: Привет, участник! Я Доброчат Бумеранг, который поможет тебе получить ДоброКоины. ДоброКоины - это валюта, которую ты сможешь получить, посещая все мероприятия, выполняя разные задания.У ДоброКоинов разные номинал. На закрытии ты сможешь обменять доброкоины в формате аукциона и выиграть ценные призы.",
+  "main": "index.js",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "exceljs": "^4.4.0",
+    "node-cron": "^3.0.3",
+    "pg": "^8.13.1",
+    "telegraf": "^4.16.3"
+  },
+  "scripts": {
+    "dev": "node index.js",
+    "start": "pm2 start index.js --name dobrocoin",
+    "stop": "pm2 stop dobrocoin",
+    "restart": "pm2 restart dobrocoin",
+    "delete": "pm2 delete dobrocoin",
+    "logs": "pm2 logs dobrocoin",
+    "startup": "pm2 startup",
+    "save": "pm2 save",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
