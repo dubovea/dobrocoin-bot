@@ -26,7 +26,7 @@ async function startQuiz(ctx) {
 
   // Проверка, проходил ли пользователь викторину сегодня
   const quizAttempt = await dbClient.query(
-    `SELECT * FROM user_quiz_attempts WHERE telegram_login = $1 AND quiz_date = $2`,
+    `SELECT * FROM user_quiz_attempts WHERE LOWER(telegram_login) = LOWER($1) AND quiz_date = $2`,
     [telegramLogin, today]
   );
 
@@ -111,12 +111,10 @@ async function completeQuiz(ctx) {
   const telegramLogin = ctx.from.username;
   const coinsEarned = quiz.correctAnswersCount * 20;
 
-  // Начисление коинов пользователю
   await dbClient.query(
-    `UPDATE users SET coins = coins + $1 WHERE telegram_login = $2`,
+    `UPDATE users SET coins = coins + $1 WHERE LOWER(telegram_login) = LOWER($2)`,
     [coinsEarned, telegramLogin]
   );
-
   // Сохранение попытки
   const today = getDateString();
   await dbClient.query(

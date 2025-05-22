@@ -165,8 +165,8 @@ bot.action(/confirm_(\d+)/, async (ctx) => {
       [deedId]
     );
     await dbClient.query(
-      `UPDATE public.users SET coins = coins + 30 WHERE telegram_login = $1`,
-      [telegramLogin]
+      `UPDATE public.users SET coins = coins + $1 WHERE LOWER(telegram_login) = LOWER($2)`,
+      [30, telegramLogin]
     );
 
     try {
@@ -425,8 +425,8 @@ bot.on("message", async (ctx) => {
           // Код существует, но еще не использован этим пользователем
           const total = 50;
           await dbClient.query(
-            `UPDATE public.users SET coins = coins + ${total} WHERE telegram_login = $1`,
-            [telegramLogin]
+            `UPDATE public.users SET coins = coins + $1 WHERE LOWER(telegram_login) = LOWER($2)`,
+            [total, telegramLogin]
           );
 
           const totalCoins = await getUserCoins(telegramLogin);
