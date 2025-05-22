@@ -41,9 +41,10 @@ async function addUser(ctx) {
 
   try {
     await dbClient.query(
-      `INSERT INTO public.users (telegram_login, full_name, volunteer_experience, coins) VALUES ($1, $2, $3, 0)`,
+      `INSERT INTO public.users (telegram_login, full_name, volunteer_experience, coins) VALUES (LOWER($1), $2, $3, 0)`,
       [telegramLogin, fullName, experience]
     );
+
     return { fullName, isAdminUser: IS_ADMIN };
   } catch (err) {
     console.error(errors.registrationError, err);

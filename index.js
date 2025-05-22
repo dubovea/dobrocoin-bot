@@ -433,7 +433,7 @@ bot.on("message", async (ctx) => {
 
           // Сохраняем информацию об использовании кода
           await dbClient.query(
-            `INSERT INTO public.used_codes (telegram_login, code_word) VALUES ($1, $2)`,
+            `INSERT INTO public.used_codes (telegram_login, code_word) VALUES (LOWER($1), $2)`,
             [telegramLogin, validCode]
           );
 
@@ -489,7 +489,7 @@ bot.on("message", async (ctx) => {
       const normalizedLogin = user.rows[0].telegram_login;
 
       await dbClient.query(
-        `INSERT INTO public.good_deeds (telegram_login, photo_id, description, status) VALUES ($1, $2, $3, '${status.pending}')`,
+        `INSERT INTO public.good_deeds (telegram_login, photo_id, description, status) VALUES (LOWER($1), $2, $3, '${status.pending}')`,
         [normalizedLogin, photoId, caption]
       );
 

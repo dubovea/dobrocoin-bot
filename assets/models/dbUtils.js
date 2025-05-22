@@ -118,7 +118,7 @@ async function completeQuiz(ctx) {
   // Сохранение попытки
   const today = getDateString();
   await dbClient.query(
-    `INSERT INTO user_quiz_attempts (telegram_login, quiz_date, correct_answers_count) VALUES ($1, $2, $3)`,
+    `INSERT INTO user_quiz_attempts (telegram_login, quiz_date, correct_answers_count) VALUES (LOWER($1), $2, $3)`,
     [telegramLogin, today, quiz.correctAnswersCount]
   );
 
