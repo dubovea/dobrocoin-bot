@@ -374,8 +374,8 @@ bot.hears(buttons.goodDeedEvent, async (ctx) => {
     const telegramLogin = ctx.from.username;
     const resultCount = await dbClient.query(
       `SELECT COUNT(*) FROM good_deeds 
-     WHERE telegram_login = $1 
-     AND DATE(created_at) = $2`,
+        WHERE LOWER(telegram_login) = LOWER($1) 
+        AND DATE(created_at) = $2`,
       [telegramLogin, currentDate]
     );
 
@@ -414,7 +414,10 @@ bot.on("message", async (ctx) => {
         const validCode = codeResult.rows[0].code_word;
         // Проверяем, использовал ли пользователь код ранее
         const usedCodeResult = await dbClient.query(
-          `SELECT * FROM public.used_codes WHERE telegram_login = $1 AND code_word = $2`,
+          `SELECT * FROM public.used_codes 
+            WHERE LOWER(telegram_login) = LOWER($1) 
+            AND code_word = $2
+            LIMIT 1`,
           [telegramLogin, validCode]
         );
 
@@ -474,9 +477,20 @@ bot.on("message", async (ctx) => {
     const caption = ctx.message.caption || messages.emptyDeedDescription;
 
     try {
+      const user = await dbClient.query(
+        `SELECT telegram_login FROM public.users WHERE LOWER(telegram_login) = LOWER($1) LIMIT 1`,
+        [telegramLogin]
+      );
+
+      if (!user.rows.length) {
+        throw new Error("Пользователь не найден");
+      }
+
+      const normalizedLogin = user.rows[0].telegram_login;
+
       await dbClient.query(
         `INSERT INTO public.good_deeds (telegram_login, photo_id, description, status) VALUES ($1, $2, $3, '${status.pending}')`,
-        [telegramLogin, photoId, caption]
+        [normalizedLogin, photoId, caption]
       );
 
       session.currentAction = null;

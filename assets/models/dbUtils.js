@@ -4,7 +4,9 @@ const { buttons, messages } = require("./constants");
 async function getUserCoins(telegramLogin) {
   try {
     const result = await dbClient.query(
-      `SELECT coins FROM public.users WHERE telegram_login = $1`,
+      `SELECT coins FROM public.users 
+        WHERE LOWER(telegram_login) = LOWER($1)
+        LIMIT 1`,
       [telegramLogin]
     );
     return result.rows.length > 0 ? result.rows[0].coins : 0;
